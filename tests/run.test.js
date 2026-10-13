@@ -118,3 +118,133 @@ test('qualify endpoint validates + scores', async () => {
   const j = await r.json();
   assert.equal(j.qualification.band, 'Green');
 });
+
+// --- RED: duplicate proposal + pipeline search/filter (TDD, failing first) ---
+async function createProposal(cookie, overrides = {}) {
+  const body = {
+    client_name: 'Acme Corp', title: 'Website rebuild — Acme', project_type: 'Website rebuild',
+    tiers: [
+      { name: 'Essential', items: [{ description: 'Homepage', qty: 1, price: 1000 }] },
+      { name: 'Standard', items: [{ description: 'Homepage + 5 pages', qty: 1, price: 2000 }] },
+      { name: 'Complete', items: [{ description: 'Full site + CMS', qty: 1, price: 3000 }] },
+    ],
+    ...overrides,
+  };
+  const r = await fetch(base + '/api/proposals', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', Cookie: cookie }, body: JSON.stringify(body),
+  });
+  assert.equal(r.status, 200, 'createProposal should succeed: ' + JSON.stringify(await r.clone().json().catch(() => ({}))));
+  const j = await r.json();
+  return j.proposal;
+}
+
+test('duplicate proposal — copy with (Copy), draft, new public_id, same tiers, isolation', async () => {
+  const a = await signup('dup-a@test.local', 'Password123!');
+  const cookieA = a.cookie.split(';')[0];
+  const b = await signup('dup-b@test.local', 'Password123!');
+  const cookieB = b.cookie.split(';')[0];
+
+  const orig = await createProposal(cookieA, { client_name: 'Acme Corp', title: 'Website rebuild — Acme' });
+  // Move original to sent so we can prove the copy resets to draft.
+  const upd = await fetch(base + '/api/proposals/' + orig.id, {
+    method: 'PUT', headers: { 'Content-Type': 'application/json', Cookie: cookieA },
+    body: JSON.stringify({ status: 'sent' }),
+  });
+  assert.equal(upd.status, 200);
+
+  const dupRes = await fetch(base + '/api/proposals/' + orig.id + '/duplicate', {
+    method: 'POST', headers: { Cookie: cookieA },
+  });
+  assert.equal(dupRes.status, 200, 'duplicate should succeed');
+  const dupJson = await dupRes.json();
+  const copy = dupJson.proposal;
+  assert.ok(copy.id !== orig.id, 'copy has a different id');
+  assert.notEqual(copy.public_id, orig.public_id, 'copy has a new public_id');
+  assert.equal(copy.title, orig.title + ' (Copy)');
+  assert.equal(copy.status, 'draft', 'copy resets to draft');
+  assert.equal(copy.client_name, orig.client_name);
+  assert.equal(copy.tiers.length, 3);
+  assert.deepEqual(
+    copy.tiers.map(t => ({ name: t.name, items: t.items.map(i => ({ description: i.description, qty: i.qty, price: i.price })) })),
+    orig.tiers.map(t => ({ name: t.name, items: t.items.map(i => ({ description: i.description, qty: i.qty, price: i.price })) })),
+  );
+
+  // Isolation: another user cannot duplicate it.
+  const bDup = await fetch(base + '/api/proposals/' + orig.id + '/duplicate', {
+    method: 'POST', headers: { Cookie: cookieB },
+  });
+  assert.equal(bDup.status, 404);
+
+  // Unauthenticated -> 401.
+  const unauth = await fetch(base + '/api/proposals/' + orig.id + '/duplicate', { method: 'POST' });
+  assert.equal(unauth.status, 401);
+
+  // Invalid id -> 400; nonexistent -> 404.
+  const badId = await fetch(base + '/api/proposals/abc/duplicate', { method: 'POST', headers: { Cookie: cookieA } });
+  assert.equal(badId.status, 400);
+  const missing = await fetch(base + '/api/proposals/999999/duplicate', { method: 'POST', headers: { Cookie: cookieA } });
+  assert.equal(missing.status, 404);
+});
+
+test('pipeline search/filter — by status, by q (client/title, case-insensitive), combined', async () => {
+  const u = await signup('filter@test.local', 'Password123!');
+  const cookie = u.cookie.split(';')[0];
+
+  const p1 = await createProposal(cookie, { client_name: 'Acme Corp', title: 'Website rebuild — Acme' });
+  const p2 = await createProposal(cookie, { client_name: 'Beta Bakery', title: 'Landing page — Beta' });
+  const p3 = await createProposal(cookie, { client_name: 'Gamma Gardens', title: 'SEO fix — Gamma' });
+  // Set statuses: p1 sent, p2 accepted, p3 stays draft.
+  for (const [p, st] of [[p1, 'sent'], [p2, 'accepted']]) {
+    const r = await fetch(base + '/api/proposals/' + p.id, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json', Cookie: cookie },
+      body: JSON.stringify({ status: st }),
+    });
+    assert.equal(r.status, 200);
+  }
+
+  async function list(qs) {
+    const r = await fetch(base + '/api/proposals' + qs, { headers: { Cookie: cookie } });
+    assert.equal(r.status, 200, 'list ' + qs);
+    return (await r.json()).proposals;
+  }
+
+  // No filter -> all three (at least; this user only created these three).
+  const all = await list('');
+  assert.equal(all.length, 3);
+
+  // Status filter.
+  const sent = await list('?status=sent');
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0].id, p1.id);
+  const draft = await list('?status=draft');
+  assert.equal(draft.length, 1);
+  assert.equal(draft[0].id, p3.id);
+
+  // q matches client_name, case-insensitive.
+  const acme = await list('?q=acme');
+  assert.equal(acme.length, 1);
+  assert.equal(acme[0].id, p1.id);
+  const beta = await list('?q=BETA');
+  assert.equal(beta.length, 1);
+  assert.equal(beta[0].id, p2.id);
+
+  // q matches title substring.
+  const landing = await list('?q=landing');
+  assert.equal(landing.length, 1);
+  assert.equal(landing[0].id, p2.id);
+
+  // Combined: status + q must both apply.
+  const combined = await list('?status=sent&q=acme');
+  assert.equal(combined.length, 1);
+  assert.equal(combined[0].id, p1.id);
+  const combinedNone = await list('?status=sent&q=beta');
+  assert.equal(combinedNone.length, 0);
+
+  // No match -> empty.
+  const none = await list('?q=zzzz-no-match');
+  assert.equal(none.length, 0);
+
+  // Invalid status -> 400.
+  const bad = await fetch(base + '/api/proposals?status=bogus', { headers: { Cookie: cookie } });
+  assert.equal(bad.status, 400);
+});
