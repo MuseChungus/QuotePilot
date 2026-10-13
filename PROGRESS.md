@@ -1,10 +1,17 @@
 # PROGRESS.md — QuotePilot Web SaaS
 
 ## Status (2026-10-13)
-- **Done:** Full-stack v1 built locally. Auth, qualify, proposal builder, share + PDF, pipeline, dashboard, PWA, tests, docs.
-- **In progress:** Verification (tests + local run + audit) — see below.
-- **Next:** Owner provides repo URL + secure auth (token via secure vault or SSH deploy key) → push `quotepilot-web/` to repo → enable Pages/hosting per DEPLOYMENT.md. Do NOT deploy from VM.
+- **Done:** Full-stack v1 built locally. Auth, qualify, proposal builder, share + PDF, pipeline, dashboard, PWA, tests, docs. Verified 2026-10-13 (see Verification below).
+- **In progress:** None — awaiting Owner for push.
+- **Next:** Owner provides repo URL + secure auth (token via secure vault or SSH deploy key) → push `quotepilot-web/` to repo → host per DEPLOYMENT.md (GitHub Pages cannot run Node/SQLite). Do NOT deploy from VM.
 - **Blocked:** GitHub push — no repo URL yet, no secure auth. Password alone does not work for git push (GitHub requires token/SSH). No browser login attempted.
+
+## Verification (2026-10-13, local only)
+- `npm test` — 5/5 pass: qualify scoring 6 cases, template totals 15 tiers exact, discount math, auth + isolation (user B 404 on user A proposal), qualify endpoint.
+- Live server smoke (port 3123/3124): health 200, index 200, manifest 200, sw 200, templates, login demo, me, dashboard, proposals, public API 200, public HTML 200, public view leaks no `user_id`.
+- `npm audit` — blocked by sandbox policy (`policy_denied` on audit endpoint), NOT bypassed. Deps are minimal (express, bcryptjs, cookie-parser, helmet). Re-run audit after push on a machine with audit access.
+- Secrets check: no `.env` file, no real secrets in repo (only demo `demo@quotepilot.local / DemoPass123!` in seed/README, demo-only). `.gitignore` covers `.env`, `*.db`, `node_modules/`.
+- Local git: 1 commit `bf4b159` — v1 full SaaS.
 
 ## What's done
 - `src/server.js` — Express app, helmet headers, rate limiting, auth, qualify, proposals, public view, dashboard.
