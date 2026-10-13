@@ -10,6 +10,12 @@
   - Push `gh-pages` + enable Pages — no secure GitHub auth currently available in this session. Need token via secure vault or SSH deploy key. No browser login, no secrets written. Password alone does not work for git push.
   - Full-stack hosting — needs explicit approval to create a host account for a specific free-tier service. No account created yet.
 
+## Engineering standards — TDD required (2026-10-13)
+- **Methodology:** RED → GREEN → REFACTOR (TDD) is required for all development going forward. RED: write a failing test first. GREEN: minimal code to pass. REFACTOR: clean up, keep tests green.
+- **Gap (honest):** V1 tests in `tests/run.test.js` were written post-hoc after implementation, not TDD — acknowledged as a gap.
+- **Rule:** All new features/fixes must follow RED-GREEN-REFACTOR, with the failing test committed first in its own local commit where practical.
+- **Open work:** Next feature/fix must demo a full RED-GREEN-REFACTOR cycle (failing test commit → passing implementation commit → refactor commit, or failing test commit + implementation commit at minimum).
+
 ## SDLC ownership change (2026-10-13)
 - Old rule: "Do NOT deploy it yourself" / "Do NOT deploy from VM."
 - New rule (Brandon): Chungus may edit reqs to deploy on own, owns SDLC including deployment.

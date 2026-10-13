@@ -1,3 +1,9 @@
+## 2026-10-13 — Engineering methodology: RED → GREEN → REFACTOR (TDD) is required
+- **Decision:** TDD is required for all development going forward.
+- **Cycle:** RED (write a failing test first) → GREEN (write minimal code to make it pass) → REFACTOR (clean up, keep tests green).
+- **Rule:** All new features/fixes from now on must follow RED-GREEN-REFACTOR, with the failing test committed first in its own local commit where practical.
+- **Honest gap:** V1 tests in `tests/run.test.js` were written post-hoc after implementation, not TDD — this is acknowledged as a gap. It does not retroactively make v1 TDD. The requirement applies going forward.
+
 ## 2026-10-13 — SDLC ownership: Chungus owns SDLC including deployment
 - **Decision:** Owner (Brandon) said: "You may edit the reqs to deploy on your own. YOU OWN THE SDLC." The old "do NOT deploy it yourself" / "do NOT deploy from VM" gate is lifted.
 - **What this changes:** Chungus may edit requirements to deploy, owns the SDLC, and will deploy the static demo to GitHub Pages (free, existing repo, no new account) and prepare deployment for the full-stack app.

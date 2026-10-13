@@ -28,6 +28,9 @@ npm start
 ```
 Env: copy `.env.example` to `.env` and set `SESSION_SECRET` to a long random value. Never commit a real `.env`.
 
+## Development: TDD (RED → GREEN → REFACTOR)
+TDD is required for all new work. Cycle: RED — write a failing test first; GREEN — write minimal code to pass; REFACTOR — clean up, keep tests green. Commit the failing test first in its own local commit where practical. Note: v1 tests were written post-hoc after implementation (acknowledged gap); the TDD requirement applies going forward.
+
 ## How to test
 ```bash
 npm test
