@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Runtime data — NEVER commit real user data or DB
+data/*.db
+data/*.db-journal
+*.db
+uploads/
+
+# Env — NEVER commit real secrets
+.env
+.env.local
+
+# Logs / OS
+*.log
+.DS_Store

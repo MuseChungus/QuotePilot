@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Proposal — QuotePilot</title><link rel="stylesheet" href="/styles.css"></head><body>
+<header class="topbar"><strong>QuotePilot</strong><span class="muted">Shared proposal</span></header>
+<main class="wrap"><div id="content">Loading…</div>
+<div class="no-print"><button class="btn" onclick="window.print()">Print / Save as PDF</button></div>
+<p class="muted small">This is a shared proposal view (draft + share + PDF). It is not legal e-sign.</p></main>
+<script>
+async function load(){
+  const id = location.pathname.split('/p/')[1];
+  const r = await fetch('/api/public/proposals/'+encodeURIComponent(id));
+  const el = document.getElementById('content');
+  if(!r.ok){ el.innerHTML='<div class="error">Proposal not found.</div>'; return; }
+  const {proposal:p} = await r.json();
+  let tiers = p.tiers.map(t=>`<div class="tier"><h3>${escapeHtml(t.name)} — $${t.subtotal ?? ''}</h3>${t.items.map(i=>`<div class="row"><span>${escapeHtml(i.description)}</span><span>${i.qty} × $${i.price}</span></div>`).join('')}</div>`).join('');
+  // totals come from server totals
+  const totals = p.totals.tiers.map(t=>`<div>${escapeHtml(t.name)}: <strong>$${t.total.toLocaleString()}</strong></div>`).join('');
+  el.innerHTML = `<div class="card"><h1>${escapeHtml(p.title)}</h1><p>For ${escapeHtml(p.client_name)} • ${escapeHtml(p.project_type)} • Expires ${escapeHtml(p.expiry||'—')}</p><p>Deposit ${p.deposit_pct}% • Discount ${p.discount_pct}%</p>${tiers}<div class="totals">${totals}</div><h3>Terms</h3><p>${escapeHtml(p.terms||'')}</p></div>`;
+}
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+load();
+</script></body></html>
