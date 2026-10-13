@@ -203,17 +203,21 @@ app.post('/api/proposals', requireAuth, (req, res) => {
     cleanStr(b.terms || '', 2000), 'draft', cleanStr(b.follow_up_date || '', 50)
   );
   const pid = info.lastInsertRowid;
-  b.tiers.forEach((t, ti) => {
-    const tierInfo = db.prepare('INSERT INTO proposal_tiers (proposal_id, name, sort_order) VALUES (?,?,?)').run(pid, cleanStr(t.name, 100), ti);
+  insertProposalTiers(pid, b.tiers);
+  const full = loadProposalFull(pid, req.user.id);
+  return res.json({ ok: true, proposal: full });
+});
+
+function insertProposalTiers(proposalId, tiers) {
+  tiers.forEach((t, ti) => {
+    const tierInfo = db.prepare('INSERT INTO proposal_tiers (proposal_id, name, sort_order) VALUES (?,?,?)').run(proposalId, cleanStr(t.name, 100), ti);
     t.items.forEach((it, ii) => {
       db.prepare('INSERT INTO proposal_items (tier_id, description, qty, price, is_addon, sort_order) VALUES (?,?,?,?,?,?)').run(
         tierInfo.lastInsertRowid, cleanStr(it.description, 500), Number(it.qty), Number(it.price), it.is_addon ? 1 : 0, ii
       );
     });
   });
-  const full = loadProposalFull(pid, req.user.id);
-  return res.json({ ok: true, proposal: full });
-});
+}
 
 app.get('/api/proposals', requireAuth, (req, res) => {
   const status = typeof req.query.status === 'string' ? req.query.status : '';
@@ -276,14 +280,7 @@ app.post('/api/proposals/:id/duplicate', requireAuth, (req, res) => {
     orig.terms, 'draft', orig.follow_up_date
   );
   const pid = info.lastInsertRowid;
-  orig.tiers.forEach((t, ti) => {
-    const tierInfo = db.prepare('INSERT INTO proposal_tiers (proposal_id, name, sort_order) VALUES (?,?,?)').run(pid, t.name, ti);
-    t.items.forEach((it, ii) => {
-      db.prepare('INSERT INTO proposal_items (tier_id, description, qty, price, is_addon, sort_order) VALUES (?,?,?,?,?,?)').run(
-        tierInfo.lastInsertRowid, it.description, it.qty, it.price, it.is_addon ? 1 : 0, ii
-      );
-    });
-  });
+  insertProposalTiers(pid, orig.tiers);
   const full = loadProposalFull(pid, req.user.id);
   return res.json({ ok: true, proposal: full });
 });
