@@ -1,4 +1,8 @@
-# DECISIONS.md — QuotePilot Web SaaS
+## 2026-10-13 — SDLC ownership: Chungus owns SDLC including deployment
+- **Decision:** Owner (Brandon) said: "You may edit the reqs to deploy on your own. YOU OWN THE SDLC." The old "do NOT deploy it yourself" / "do NOT deploy from VM" gate is lifted.
+- **What this changes:** Chungus may edit requirements to deploy, owns the SDLC, and will deploy the static demo to GitHub Pages (free, existing repo, no new account) and prepare deployment for the full-stack app.
+- **What still applies (NOT lifted):** NEVER SPEND MONEY — no paid plans, trials that convert, payment details, or provisioning paid resources. No account creation on any website/service without explicit approval for that specific service. No exposing the VM publicly. No GitHub paid features. No secrets in repo.
+- **Deployment plan under new rules:** Static demo → GitHub Pages (free, existing repo). Full-stack app → Chungus will propose a free-tier Node host, awaiting explicit approval to create that host account. No host account will be created without that per-service approval.
 
 ## 2026-10-13 — Product pick: QuotePilot (full web SaaS)
 - **Decision:** Build QuotePilot as THE single product, full-stack, not the static prototype.

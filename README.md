@@ -1,5 +1,9 @@
 # QuotePilot — Full Web SaaS
 
+**SDLC ownership (2026-10-13, Brandon approval):** Chungus owns the SDLC including deployment. The old "do NOT deploy yourself" gate is lifted. NEVER SPEND MONEY and no account creation without explicit per-service approval still apply.
+
+**Deployment:** Static demo → GitHub Pages (`gh-pages` branch, free, existing repo). Full-stack app (this code, `master` branch) needs a Node host — see DEPLOYMENT.md. Chungus will propose a free-tier Node host and wait for explicit approval to create that host account.
+
 **One-liner:** Stop writing free proposals for people who can't afford you. Qualify budget first, then build a 3-option proposal in 10 minutes.
 
 **Who it's for:** Freelancers, web designers, marketing consultants, small agencies (1–10 people) writing 3–10 proposals/month.

@@ -1,9 +1,15 @@
-# DEPLOYMENT.md — QuotePilot Web SaaS (do NOT deploy from VM)
+# DEPLOYMENT.md — QuotePilot Web SaaS
 
-This app is a Node + SQLite server. It is NOT a static site — GitHub Pages alone cannot run it (Pages is static only). You need a Node host.
+**SDLC ownership (2026-10-13, Brandon approval):** Chungus owns the SDLC including deployment. The old "do NOT deploy from VM" gate is lifted. NEVER SPEND MONEY and no account creation without explicit per-service approval still apply.
 
-## What you need to set up (Owner action)
-1. A Node host (see options below).
+**Plan:**
+- Static demo (client-side prototype) → GitHub Pages, `gh-pages` branch, free, existing repo, no new account. Chungus will deploy this.
+- Full-stack app (this code, `master` branch) → Node host. Chungus will propose a free-tier Node host and await explicit approval to create that host account. No host account will be created without that per-service approval.
+
+This app is a Node + SQLite server. It is NOT a static site — GitHub Pages alone cannot run it (Pages is static only). You need a Node host for the full-stack app.
+
+## What you need to set up (Chungus proposes, Owner approves host account)
+1. A Node host (see options below). Chungus will propose a free-tier option and wait for explicit approval to create that host account.
 2. Environment vars: `PORT`, `DATABASE_PATH`, `SESSION_SECRET` (long random), `NODE_ENV=production`.
 3. HTTPS (host provides it, or reverse proxy with cert).
 4. Backups for the SQLite file (or migrate to managed DB if you outgrow it).
@@ -31,7 +37,7 @@ NODE_ENV=production npm start
 ```
 
 ## Notes
-- Do NOT use GitHub Pages for this app — it cannot run Node/SQLite.
+- GitHub Pages is for the static demo only (`gh-pages` branch). Do NOT use Pages for the full-stack app — it cannot run Node/SQLite.
 - Keep `SESSION_SECRET` secret, rotate if leaked.
 - Enable Dependabot / audit on GitHub after push.
 - Back up `data/quotepilot.db` regularly.
