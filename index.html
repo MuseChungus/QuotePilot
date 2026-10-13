@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QuotePilot — Stop writing free proposals for people who can't afford you</title>
+<meta name="description" content="QuotePilot qualifies budget first, then builds a 3-option proposal in 10 minutes. For web & marketing freelancers.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- READ-ONLY SHARE VIEW (shown when URL has #p=...) -->
+<div id="shareView" class="share-view" hidden>
+  <div class="share-inner">
+    <div class="share-top"><span class="logo">QuotePilot <span class="pill">Proposal</span></span><button class="btn btn-ghost" onclick="window.location.hash='';window.location.reload()">Back to QuotePilot</button></div>
+    <div id="shareProposal"></div>
+    <div class="share-actions">
+      <button class="btn btn-primary" onclick="window.print()">Print / Save as PDF</button>
+      <button class="btn btn-secondary" id="shareAcceptBtn">Reply to accept</button>
+    </div>
+    <p class="muted small">This proposal was shared as a link. No account needed to view it. To accept, reply to the sender by email.</p>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="logo" href="#top">QuotePilot <span class="logo-dot">●</span></a>
+    <nav class="nav">
+      <a href="#how">How it works</a>
+      <a href="#templates">Templates</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="#app">Launch the app →</a>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero wrap">
+    <div class="hero-copy">
+      <p class="eyebrow">For web &amp; marketing freelancers</p>
+      <h1>Stop writing free proposals for people who can't afford you.</h1>
+      <p class="lede">QuotePilot qualifies budget first, then builds a 3-option proposal in 10 minutes. No more 4–8 hours of unpaid work, no more ghosting after you already did the work.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="#app">Qualify a lead now →</a>
+        <a class="btn btn-secondary btn-lg" href="#templates">See templates</a>
+      </div>
+      <p class="muted small">Free to try — 2 proposals / month. No credit card. Your data stays in your browser in v1.</p>
+      <div class="hero-stats">
+        <div><strong>10 min</strong><span>to a finished proposal</span></div>
+        <div><strong>3 tiers</strong><span>so clients choose, not haggle</span></div>
+        <div><strong>0</strong><span>per-seat fees. Flat pricing.</span></div>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-head"><span>Example: Website rebuild</span><span class="badge green">Qualified • Green</span></div>
+      <div class="hero-card-body">
+        <p class="muted small">Budget $3–7k • Timeline 4–6 weeks • Wants new site + booking</p>
+        <div class="tier-preview">
+          <div><span>Essential</span><strong>$2,500</strong></div>
+          <div class="featured"><span>Standard ★ Most chosen</span><strong>$4,800</strong></div>
+          <div><span>Complete</span><strong>$8,500</strong></div>
+        </div>
+        <p class="small">Client picks Standard. You didn't anchor low. You didn't write 8 pages for free.</p>
+        <a class="btn btn-primary btn-block" href="#app">Try it with your next lead</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="section wrap">
+    <h2>How it works</h2>
+    <p class="section-sub">Flip the order. Qualify first, propose second, follow up third.</p>
+    <div class="grid3">
+      <div class="card"><div class="step-num">1</div><h3>Qualify</h3><p>Enter client, project type, budget range, timeline, and scope. Get an instant Green / Yellow / Red score with reasons. Red gets a polite decline you can copy — no awkward call needed.</p></div>
+      <div class="card"><div class="step-num">2</div><h3>Build</h3><p>Pick a template, edit 3 tiers (Essential / Standard / Complete), adjust line items, add-ons, discount, expiry, and deposit. Live totals update as you type.</p></div>
+      <div class="card"><div class="step-num">3</div><h3>Send &amp; follow up</h3><p>Share a link (encoded in the URL, no backend), print to PDF, or copy the email intro. Track Draft → Sent → Accepted / Lost and nudge on Day 2 and Day 5.</p></div>
+    </div>
+  </section>
+
+  <!-- TEMPLATES -->
+  <section id="templates" class="section wrap">
+    <h2>Templates that start at real prices</h2>
+    <p class="section-sub">Built for the work freelancers actually sell. Click any template to load it in the app.</p>
+    <div class="grid3">
+      <div class="card template-card"><h3>Website rebuild</h3><p class="muted">5–8 page site, mobile, SEO basics, launch.</p><p><strong>$2,500 / $4,800 / $8,500</strong></p><button class="btn btn-secondary btn-block" data-template="Website rebuild">Use this template</button></div>
+      <div class="card template-card"><h3>Landing page</h3><p class="muted">One focused page, copy polish, form, analytics.</p><p><strong>$900 / $1,800 / $3,200</strong></p><button class="btn btn-secondary btn-block" data-template="Landing page">Use this template</button></div>
+      <div class="card template-card"><h3>SEO / CRO audit fix</h3><p class="muted">Audit + fix the top issues, not a 60-page PDF.</p><p><strong>$1,200 / $2,400 / $4,200</strong></p><button class="btn btn-secondary btn-block" data-template="SEO / CRO audit fix">Use this template</button></div>
+      <div class="card template-card"><h3>HubSpot setup</h3><p class="muted">CRM, forms, pipelines, automation, training.</p><p><strong>$2,000 / $3,800 / $6,500</strong></p><button class="btn btn-secondary btn-block" data-template="HubSpot setup">Use this template</button></div>
+      <div class="card template-card"><h3>Monthly retainer</h3><p class="muted">Ongoing updates, CRO tests, reporting.</p><p><strong>$800 / $1,500 / $2,800 / mo</strong></p><button class="btn btn-secondary btn-block" data-template="Monthly retainer">Use this template</button></div>
+    </div>
+    <p class="muted small">Prices are starting points from real freelancer ranges. Edit any line item to match your rates.</p>
+  </section>
+
+  <!-- APP -->
+  <section id="app" class="section wrap">
+    <div class="app-head">
+      <div><h2>QuotePilot App</h2><p class="muted">Qualify → Build → Send. Everything saves in your browser (localStorage). No account needed in v1.</p></div>
+      <div class="app-stats" id="dashboardStats">
+        <div><strong id="statTotal">0</strong><span>Proposals</span></div>
+        <div><strong id="statWin">—</strong><span>Win rate</span></div>
+        <div><strong id="statAvg">$0</strong><span>Avg. deal</span></div>
+        <div><strong id="statSaved">0h</strong><span>Est. time saved</span></div>
+      </div>
+    </div>
+
+    <div class="stepper">
+      <button class="step-btn active" data-step="qualify">1 • Qualify</button>
+      <button class="step-btn" data-step="build">2 • Build</button>
+      <button class="step-btn" data-step="send">3 • Send &amp; Follow-up</button>
+    </div>
+
+    <!-- STEP 1 QUALIFY -->
+    <div class="panel" id="panel-qualify">
+      <h3>Step 1 — Qualify the lead</h3>
+      <p class="muted">If the budget doesn't fit the scope, find out now — not after 6 hours of proposal work.</p>
+      <form id="qualifyForm" class="form-grid">
+        <label>Client / Business name <input id="qClient" type="text" placeholder="e.g. Sunshine Plumbing" required></label>
+        <label>Client email <input id="qEmail" type="email" placeholder="owner@example.com"></label>
+        <label>Project type
+          <select id="qType">
+            <option>Website rebuild</option>
+            <option>Landing page</option>
+            <option>SEO / CRO audit fix</option>
+            <option>HubSpot setup</option>
+            <option>Monthly retainer</option>
+            <option>Custom</option>
+          </select>
+        </label>
+        <label>Budget range
+          <select id="qBudget">
+            <option value="<$1k">&lt; $1,000</option>
+            <option value="$1-3k" selected>$1,000 – $3,000</option>
+            <option value="$3-7k">$3,000 – $7,000</option>
+            <option value="$7k+">$7,000+</option>
+            <option value="Not sure">Not sure / need guidance</option>
+          </select>
+        </label>
+        <label>Timeline
+          <select id="qTimeline">
+            <option>ASAP / under 2 weeks</option>
+            <option selected>2–4 weeks</option>
+            <option>4–6 weeks</option>
+            <option>6+ weeks / flexible</option>
+            <option>No rush</option>
+          </select>
+        </label>
+        <label class="full">Scope notes <textarea id="qNotes" rows="3" placeholder="What do they actually need? Pages, features, must-haves, red flags..."></textarea></label>
+        <div class="full row gap">
+          <button type="submit" class="btn btn-primary">Score this lead</button>
+          <button type="button" class="btn btn-secondary" id="qualifyClear">Clear</button>
+        </div>
+      </form>
+      <div id="qualifyResult" class="qualify-result" hidden></div>
+      <div id="declineBox" class="decline-box" hidden>
+        <h4>Polite decline (copy &amp; send)</h4>
+        <p id="declineText"></p>
+        <button class="btn btn-secondary btn-sm" id="copyDecline">Copy decline</button>
+      </div>
+      <div class="row gap" style="margin-top:12px">
+        <button class="btn btn-primary" id="saveToPipeline">Save to pipeline + Continue to Build →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 BUILD -->
+    <div class="panel" id="panel-build" hidden>
+      <h3>Step 2 — Build the 3-tier proposal</h3>
+      <p class="muted">Clients choose a tier instead of haggling a single number. Standard should be the best value — most clients pick it.</p>
+      <div class="form-grid">
+        <label>Client name <input id="pClient" type="text" placeholder="Sunshine Plumbing"></label>
+        <label>Client email <input id="pEmail" type="email" placeholder="owner@example.com"></label>
+        <label class="full">Proposal title <input id="pTitle" type="text" value="Website rebuild — proposal"></label>
+        <label>Expiry date <input id="pExpiry" type="date"></label>
+        <label>Deposit % <input id="pDeposit" type="number" min="0" max="100" value="50"></label>
+        <label>Discount % <input id="pDiscount" type="number" min="0" max="100" value="0"></label>
+        <label class="full">Terms <textarea id="pTerms" rows="2">50% deposit to start, balance on launch. Price valid until expiry date above. One revision round included per tier. Extra revisions billed hourly.</textarea></label>
+      </div>
+      <div class="template-row">
+        <span class="muted small">Load a template:</span>
+        <button class="btn btn-ghost btn-sm" data-template="Website rebuild">Website rebuild</button>
+        <button class="btn btn-ghost btn-sm" data-template="Landing page">Landing page</button>
+        <button class="btn btn-ghost btn-sm" data-template="SEO / CRO audit fix">SEO / CRO fix</button>
+        <button class="btn btn-ghost btn-sm" data-template="HubSpot setup">HubSpot setup</button>
+        <button class="btn btn-ghost btn-sm" data-template="Monthly retainer">Retainer</button>
+      </div>
+      <div id="tiersContainer" class="tiers"></div>
+      <div class="addons">
+        <h4>Optional add-ons</h4>
+        <div id="addonsContainer"></div>
+        <button class="btn btn-secondary btn-sm" id="addAddon">+ Add add-on</button>
+      </div>
+      <div class="totals-box" id="totalsBox"></div>
+      <div class="row gap">
+        <button class="btn btn-primary" id="saveDraft">Save draft</button>
+        <button class="btn btn-secondary" id="goToSend">Continue to Send →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 SEND -->
+    <div class="panel" id="panel-send" hidden>
+      <h3>Step 3 — Send &amp; follow up</h3>
+      <div id="proposalPreview" class="proposal-preview"></div>
+      <div class="form-grid">
+        <label class="full">Share link (proposal encoded in URL — no backend) <input id="shareLink" type="text" readonly></label>
+      </div>
+      <div class="row gap wrap">
+        <button class="btn btn-primary" id="copyShareLink">Copy share link</button>
+        <button class="btn btn-secondary" onclick="window.print()">Print / Save as PDF</button>
+        <button class="btn btn-secondary" id="copyEmailIntro">Copy email intro</button>
+        <button class="btn btn-secondary" id="markSent">Mark as Sent</button>
+      </div>
+      <h4 style="margin-top:24px">Follow-up templates</h4>
+      <div class="grid3">
+        <div class="card"><h4>Day 2 nudge</h4><p class="small" id="tplDay2">Hi [Name] — just checking you got the proposal for [Project]. Happy to walk through the Standard vs Complete options in 10 min if helpful. The price holds until [Expiry].</p><button class="btn btn-secondary btn-sm" data-copy-tpl="tplDay2">Copy</button></div>
+        <div class="card"><h4>Day 5 expiry</h4><p class="small" id="tplDay5">Hi [Name] — heads up, the proposal for [Project] expires on [Expiry]. Want me to hold your start date, or should I release it? No pressure either way.</p><button class="btn btn-secondary btn-sm" data-copy-tpl="tplDay5">Copy</button></div>
+        <div class="card"><h4>Decline gracefully</h4><p class="small" id="tplDecline">Thanks for sharing details. Based on your budget range, I don't think I'm the right fit for this scope at a quality I'd stand behind. If budget opens up to [Range], I'm happy to revisit. Good luck with the project.</p><button class="btn btn-secondary btn-sm" data-copy-tpl="tplDecline">Copy</button></div>
+      </div>
+      <h4 style="margin-top:24px">Pipeline</h4>
+      <div class="row gap wrap">
+        <label class="small">Filter <select id="pipelineFilter"><option value="All">All</option><option>Draft</option><option>Sent</option><option>Viewed</option><option>Accepted</option><option>Lost</option></select></label>
+        <button class="btn btn-ghost btn-sm" id="exportPipeline">Export pipeline (CSV)</button>
+        <button class="btn btn-ghost btn-sm" id="clearPipeline">Clear pipeline</button>
+      </div>
+      <div id="pipelineTableWrap" class="table-wrap"></div>
+      <p class="muted small">Pipeline lives in your browser (localStorage). In v1 there is no open-tracking, no CRM sync, no e-sign audit trail — status is updated manually. See README for the honest v1 limits.</p>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" class="section wrap">
+    <h2>Pricing — flat, not per-seat</h2>
+    <p class="section-sub">Competitors charge per seat. A 3-person team pays $147/mo on Proposify vs $49/mo here. QuotePilot is flat per account.</p>
+    <div class="grid3">
+      <div class="card price-card"><h3>Free</h3><p class="price">$0</p><p class="muted">Try it on real leads</p><ul><li>2 proposals / month</li><li>Core templates</li><li>Qualify + 3-tier builder</li><li>QuotePilot branding</li></ul><button class="btn btn-secondary btn-block" onclick="document.getElementById('app').scrollIntoView({behavior:'smooth'})">Start free</button></div>
+      <div class="card price-card featured"><h3>Pro</h3><p class="price">$19<span class="muted">/mo</span></p><p class="muted">For solo freelancers</p><ul><li>Unlimited proposals</li><li>All templates + custom branding</li><li>PDF export + share links</li><li>Follow-up sequences + pipeline</li></ul><button class="btn btn-primary btn-block" data-checkout="Pro">Get Pro — coming soon</button><p class="muted small">Checkout not live in v1. Button is a placeholder — no payment collected.</p></div>
+      <div class="card price-card"><h3>Agency</h3><p class="price">$49<span class="muted">/mo</span></p><p class="muted">For 2–10 person shops</p><ul><li>Everything in Pro</li><li>3 seats included</li><li>Team templates</li><li>Shared pipeline</li></ul><button class="btn btn-secondary btn-block" data-checkout="Agency">Get Agency — coming soon</button><p class="muted small">Checkout not live in v1.</p></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="section wrap">
+    <h2>FAQ</h2>
+    <div class="faq">
+      <details><summary>Is this legally-binding e-sign?</summary><p>No — not in v1. QuotePilot v1 is proposal draft + shareable link + PDF. For a binding signature, use PandaDoc / DocuSign / HelloSign, or have the client reply "Accepted" by email. E-sign with audit trail is on the roadmap and will be clearly labeled when it ships.</p></details>
+      <details><summary>Where is my data stored?</summary><p>In your browser only (localStorage) in v1. Nothing is sent to a server. Clear your browser data and you lose your pipeline — export CSV before you do.</p></details>
+      <details><summary>Why 3 tiers?</summary><p>Single-number proposals anchor low. Three tiers let clients choose value, not haggle price. Most pick Standard when it is clearly the best value.</p></details>
+      <details><summary>What if the client has no budget?</summary><p>Score them Red, send the polite decline, and move on. You just saved 6 hours.</p></details>
+      <details><summary>Can I use this for my own business?</summary><p>Yes. That is the point. Dogfood it on your next 5 leads and see if your close rate and average deal size go up.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>QuotePilot — Qualify first. Propose second. Get paid.</span>
+    <span class="muted small">v1 • Static site • No backend • Data stays in your browser</span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
