@@ -216,8 +216,16 @@ app.post('/api/proposals', requireAuth, (req, res) => {
 });
 
 app.get('/api/proposals', requireAuth, (req, res) => {
+  const status = typeof req.query.status === 'string' ? req.query.status : '';
+  const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
+  if (status && status !== 'all' && !STATUSES.includes(status)) return res.status(400).json({ error: 'Invalid status' });
   const rows = db.prepare('SELECT id FROM proposals WHERE user_id = ? ORDER BY id DESC').all(req.user.id);
-  const out = rows.map(r => loadProposalFull(r.id, req.user.id));
+  let out = rows.map(r => loadProposalFull(r.id, req.user.id));
+  if (status && status !== 'all') out = out.filter(p => p.status === status);
+  if (q) {
+    const needle = q.toLowerCase();
+    out = out.filter(p => p.client_name.toLowerCase().includes(needle) || p.title.toLowerCase().includes(needle));
+  }
   return res.json({ proposals: out });
 });
 
@@ -249,6 +257,35 @@ app.delete('/api/proposals/:id', requireAuth, (req, res) => {
   const info = db.prepare('DELETE FROM proposals WHERE id = ? AND user_id = ?').run(id, req.user.id);
   if (info.changes === 0) return res.status(404).json({ error: 'Not found' });
   return res.json({ ok: true });
+});
+
+// Duplicate: copy with "(Copy)" title, status reset to draft, new public_id.
+app.post('/api/proposals/:id/duplicate', requireAuth, (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid id' });
+  const orig = loadProposalFull(id, req.user.id);
+  if (!orig) return res.status(404).json({ error: 'Not found' });
+  const public_id = newPublicId();
+  const info = db.prepare(`INSERT INTO proposals
+    (user_id, public_id, client_name, client_email, title, project_type, expiry, deposit_pct, discount_pct, terms, status, follow_up_date)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+    req.user.id, public_id,
+    orig.client_name, orig.client_email,
+    orig.title + ' (Copy)', orig.project_type,
+    orig.expiry, orig.deposit_pct, orig.discount_pct,
+    orig.terms, 'draft', orig.follow_up_date
+  );
+  const pid = info.lastInsertRowid;
+  orig.tiers.forEach((t, ti) => {
+    const tierInfo = db.prepare('INSERT INTO proposal_tiers (proposal_id, name, sort_order) VALUES (?,?,?)').run(pid, t.name, ti);
+    t.items.forEach((it, ii) => {
+      db.prepare('INSERT INTO proposal_items (tier_id, description, qty, price, is_addon, sort_order) VALUES (?,?,?,?,?,?)').run(
+        tierInfo.lastInsertRowid, it.description, it.qty, it.price, it.is_addon ? 1 : 0, ii
+      );
+    });
+  });
+  const full = loadProposalFull(pid, req.user.id);
+  return res.json({ ok: true, proposal: full });
 });
 
 // --- Public proposal view (no auth, public_id only, no user data leaked) ---

@@ -116,10 +116,16 @@ document.getElementById('saveProposalBtn').onclick=async()=>{
 };
 
 async function loadPipeline(){
-  const r=await fetch('/api/proposals'); if(!r.ok){document.getElementById('pipelineList').textContent='Sign in to see yours.'; return;}
+  const status = (document.getElementById('pipelineStatus') || {}).value || 'all';
+  const q = (document.getElementById('pipelineSearch') || {}).value || '';
+  const qs = new URLSearchParams();
+  if (status && status !== 'all') qs.set('status', status);
+  if (q.trim()) qs.set('q', q.trim());
+  const query = qs.toString() ? ('?' + qs.toString()) : '';
+  const r=await fetch('/api/proposals' + query); if(!r.ok){document.getElementById('pipelineList').textContent='Sign in to see yours.'; return;}
   const {proposals}=await r.json();
-  if(!proposals.length){document.getElementById('pipelineList').textContent='No proposals yet.'; return;}
-  document.getElementById('pipelineList').innerHTML=proposals.map(p=>`<div class="card"><strong>${esc(p.title)}</strong> — ${esc(p.client_name)}<div class="muted small">Status: ${esc(p.status)} • <a href="/p/${p.public_id}" target="_blank" rel="noopener">Public link</a></div><div>Totals: ${p.totals.tiers.map(t=>`${esc(t.name)} $${t.total}`).join(' • ')}</div><label>Status</label><select data-status="${p.id}"><option value="draft">draft</option><option value="sent">sent</option><option value="viewed">viewed</option><option value="accepted">accepted</option><option value="lost">lost</option></select></div>`).join('');
+  if(!proposals.length){document.getElementById('pipelineList').textContent='No proposals match.'; return;}
+  document.getElementById('pipelineList').innerHTML=proposals.map(p=>`<div class="card"><strong>${esc(p.title)}</strong> — ${esc(p.client_name)}<div class="muted small">Status: ${esc(p.status)} • <a href="/p/${p.public_id}" target="_blank" rel="noopener">Public link</a></div><div>Totals: ${p.totals.tiers.map(t=>`${esc(t.name)} $${t.total}`).join(' • ')}</div><label>Status</label><select data-status="${p.id}"><option value="draft">draft</option><option value="sent">sent</option><option value="viewed">viewed</option><option value="accepted">accepted</option><option value="lost">lost</option></select> <button class="btn small secondary" data-duplicate="${p.id}">Duplicate</button></div>`).join('');
   document.querySelectorAll('[data-status]').forEach(sel=>{
     const card=sel.closest('.card'); const pid=sel.dataset.status;
     // set current
@@ -130,7 +136,16 @@ async function loadPipeline(){
       showMsg('Status updated.'); loadDashboard();
     };
   });
+  document.querySelectorAll('[data-duplicate]').forEach(btn=>{
+    btn.onclick=async()=>{
+      const r=await fetch('/api/proposals/'+btn.dataset.duplicate+'/duplicate',{method:'POST'});
+      if(r.ok){ showMsg('Proposal duplicated as Draft.'); loadPipeline(); loadDashboard(); }
+      else showMsg('Duplicate failed.', 'error');
+    };
+  });
 }
+document.getElementById('pipelineFilterBtn').onclick=()=>loadPipeline();
+document.getElementById('pipelineSearch').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); loadPipeline(); } });
 async function loadDashboard(){
   const r=await fetch('/api/dashboard'); if(!r.ok) return;
   const d=await r.json();
